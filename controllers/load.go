@@ -51,14 +51,14 @@ func (c *controllers) renderTemplate(
 		}
 
 		tmpl := template.Must(
-			template.New("layout.gohtmltmpl").
+			template.New("layout.html").
 				Funcs(template.FuncMap{
 					"form":      r.PostFormValue,
 					"hasValues": hasValues,
 				}).
 				ParseFiles(
-					"views/layout.gohtmltmpl",
-					fmt.Sprintf("views/%s.gohtmltmpl", templateName),
+					"views/layout.html",
+					fmt.Sprintf("views/%s.html", templateName),
 				),
 		)
 
