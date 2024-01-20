@@ -9,7 +9,6 @@ import (
 	"github.com/capella/cdive/models"
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/schema"
-	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -32,19 +31,22 @@ type templateData struct {
 	FormErrors []string
 }
 
-func (c *controllers) renderTemplate(templateName string, formErrors []string) func(http.ResponseWriter, *http.Request) {
+func (c *controllers) renderTemplate(
+	templateName string,
+	formErrors []string,
+) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		user := getContextUser(r.Context())
+		if user != nil {
+			user = nil
+		}
+
 		viewData := &templateData{
 			DB:         c.DB,
-			User:       nil,
+			User:       user,
 			CSRFField:  csrf.TemplateField(r),
 			Config:     *c.Config,
 			FormErrors: formErrors,
-		}
-		store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
-		session, err := store.Get(r, "user")
-		if session != nil && err != nil {
-			c.DB.First(viewData.User, session.Values["id"])
 		}
 
 		tmpl := template.Must(
@@ -56,7 +58,7 @@ func (c *controllers) renderTemplate(templateName string, formErrors []string) f
 				),
 		)
 
-		err = tmpl.Execute(w, viewData)
+		err := tmpl.Execute(w, viewData)
 		if err != nil {
 			logrus.Error(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -64,47 +66,8 @@ func (c *controllers) renderTemplate(templateName string, formErrors []string) f
 	}
 }
 
-type LoginFields struct {
-	Password string
-	Email    string
-}
-
-func (c *controllers) Login(w http.ResponseWriter, r *http.Request) {
-	c.renderTemplate("login.html", nil)(w, r)
-}
-
-func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
-	formErrors := []string{}
-
-	err := r.ParseForm()
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
-
-	var login LoginFields
-	decoder.Decode(&login, r.PostForm)
-
-	user := &models.User{
-		Email: models.S(login.Email),
-	}
-	err = user.SetPassword(login.Password, c.Config.Server.Secret)
-	if err != nil {
-		logrus.Error(err)
-	}
-
-	result := c.DB.Where(user).First(&user)
-
-	if result.Error != nil {
-		formErrors = append(formErrors, "Username and password not found.")
-	} else if login.Email == user.Email.String {
-		store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
-		session, _ := store.Get(r, "user")
-		session.Values["id"] = user.ID
-		http.Redirect(w, r, "/", http.StatusFound)
-	}
-
-	c.renderTemplate("login.html", formErrors)(w, r)
+func (c *controllers) Home(w http.ResponseWriter, r *http.Request) {
+	c.renderTemplate("index.html", nil)(w, r)
 }
 
 func NewController(db *gorm.DB, config *Config) *controllers {

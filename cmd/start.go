@@ -1,6 +1,3 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -10,7 +7,6 @@ import (
 	"github.com/capella/cdive/controllers"
 	"github.com/capella/cdive/models"
 	"github.com/gorilla/csrf"
-	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"gorm.io/driver/mysql"
@@ -43,16 +39,7 @@ var startCmd = &cobra.Command{
 		go models.AutoMigrate(db, config.Server.Secret)
 
 		c := controllers.NewController(db, &config)
-		router := mux.NewRouter()
-
-		router.HandleFunc("/", c.Login)
-		router.HandleFunc("/login", c.LoginPOST).Methods("POST")
-		router.HandleFunc("/login", c.Login)
-		router.HandleFunc("/logout", c.Logout)
-
-		router.PathPrefix("/static/").Handler(
-			http.StripPrefix("/static/", http.FileServer(http.Dir("."))),
-		)
+		router := c.Router()
 
 		logrus.WithField("address", config.Server.Address).Info("starting server")
 		csrfRouter := csrf.Protect([]byte(config.Server.Secret))(router)
