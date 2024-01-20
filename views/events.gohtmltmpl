@@ -1,0 +1,57 @@
+{{ define "scripts" }}{{ end }} {{ define "body" }}
+<section class="section">
+  <div class="hero fullscreen">
+    <div class="hero-body">
+      <div class="content">
+        <div class="text-center">
+          <div class="p-3">
+            {{ if and .User .User.Admin }} <a class=
+            "btn btn-success u-pull-right" href="/event/">Create
+            New Event</a> {{ end }}
+            <h3>Events</h3>
+            <p>See bellow all the club events.</p>
+          </div>
+        </div>{{ if (hasValues "MinimumQualifications" .Controller)
+        }}{{ end }} {{ if (hasValues "Cost" .Controller) }}{{ end
+        }} {{ if and .User .User.Admin }} {{ end }} {{ range
+        .Controller }} {{ if (hasValues "MinimumQualifications"
+        .Controller) }}{{ end }} {{ if (hasValues "Cost"
+        .Controller) }}{{ end }} {{ end }}
+        <table class="table">
+          <thead style="text-align: left;">
+            <tr>
+              <th>From</th>
+              <th>To</th>
+              <th>Location</th>
+              <th>Name</th>
+              <th>Grade</th>
+              <th>Cost</th>
+              <th>Deposit Code</th>
+              <th>Responsible</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody style="text-align: left;">
+            <tr text-left="">
+              <td>26 Nov 23</td>
+              <td>26 Nov 23</td>
+              <td>London</td>
+              <td>Row:1 Cell:3</td>
+              <td>Row:1 Cell:4</td>
+              <td>Grade</td>
+              <td>Cost</td>
+              <td>Row:1 Cell:5</td>
+              <td class="tooltip" data-tooltip="Edit Event">
+                <div class="fa-wrapper fa fa-pen"></div>
+              </td>
+            </tr>
+            <tr style="border-top: hidden;">
+              <td colspan="3"></td>
+              <td colspan="10">teste</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>{{ end }}

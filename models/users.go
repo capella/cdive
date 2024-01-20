@@ -11,16 +11,12 @@ import (
 
 type User struct {
 	gorm.Model
-	ID uint
 
 	Name         string
 	Email        sql.NullString
 	PasswordHash sql.NullString
 
 	Admin bool `gorm:"default:FALSE"`
-
-	CreatedAt time.Time
-	UpdatedAt time.Time
 }
 
 func (u *User) SetPassword(password, secret string) error {
@@ -31,4 +27,29 @@ func (u *User) SetPassword(password, secret string) error {
 	)
 	u.PasswordHash = S(base64.StdEncoding.EncodeToString(passwordHash))
 	return err
+}
+
+type EmergencyContact struct {
+	gorm.Model
+	UserID uint
+	User   User
+
+	Name  string
+	Phone string
+}
+
+type UserInfo struct {
+	gorm.Model
+
+	UserID uint
+	User   User
+
+	Address string
+
+	Phone string
+	Notes string
+
+	ApprovedByID *uint
+	ApprovedBy   *User
+	ApprovedAt   *time.Time
 }

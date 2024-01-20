@@ -1,0 +1,166 @@
+{{ define "scripts" }}{{ end }} {{ define "body" }}
+<section class="section">
+  <div class="hero fullscreen">
+    <div class="hero-body">
+      <div class="content">
+        <form method="post">
+          <h3>{{ if .Controller }}{{ .Controller.Name}}{{ else
+          }}New Event{{ end }}</h3>
+          <p>Welcome to {{ .Config.SiteName }}!</p>
+          <ul>
+            <li>If you are not a member and want to become one, <a>
+              click here</a>
+            </li>
+            <li>If you are a menber and don't have a password or
+            lost your access, <a>click here.</a>
+            </li>
+          </ul>{{ with .FormErrors }}
+          <div class="toast toast--warning">
+            {{ range . }} {{ . }} {{ end }}
+          </div>{{ end }}
+          <div class="col-lg-6">
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Name:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="name" value="John Doe">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Email:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="email" value="john.doe@cirrus.io">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">URL:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="url" value=
+                "https://spiderpig86.github.io/Cirrus">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Search:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="search" placeholder="Search">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Telephone:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="tel" value="1-(800)-777-7777">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Password:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="password" value="password">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Number:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="number" value="420">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Date:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="date" value="2017-3-21">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Time:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="time">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Color:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="color" value="#f03d4d">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">File:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <input type="file">
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Select:</p>
+              </div>
+              <div class="col-xs-9 level-item input-control">
+                <select class="select" placeholder="Choose one">
+                  <option>
+                    Shibe
+                  </option>
+                  <option>
+                    Doggo
+                  </option>
+                  <option>
+                    Pupper
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Select (Multiple):</p>
+              </div>
+              <div class="col-xs-9 level-item input-control">
+                <select multiple class="select">
+                  <option>
+                    Shibe
+                  </option>
+                  <option>
+                    Doggo
+                  </option>
+                  <option>
+                    Pupper
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Range:</p>
+              </div>
+              <div class="col-xs-9 level-item input-control">
+                <input type="range" id="volume" name="volume" min=
+                "0" max="11"><label for="volume">Volume</label>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="u-flex u-justify-flex-end">
+            <button class="animated btn-success">Log In</button>
+          </div>
+          <div class="space"></div>{{ .CSRFField }}
+        </form>
+      </div>
+    </div>
+  </div>
+</section>{{ end }}

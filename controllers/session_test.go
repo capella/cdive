@@ -15,6 +15,7 @@ import (
 )
 
 func init() {
+	// Set the correct path for templates
 	_, filename, _, _ := runtime.Caller(0)
 	dir := path.Join(path.Dir(filename), "..")
 	err := os.Chdir(dir)
@@ -39,9 +40,14 @@ func TestUnlogUserRedirect(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected error to be nil got %v", err)
 	}
-	println(res.Request.URL.String())
+	println()
 
-	if res.StatusCode != http.StatusFound {
+	if res.StatusCode != http.StatusOK {
 		t.Errorf("expected %d status code and got %d", http.StatusFound, res.StatusCode)
+	}
+
+	url := res.Request.URL.Path
+	if url != "/login" {
+		t.Errorf("expected %s to ends with /login", url)
 	}
 }

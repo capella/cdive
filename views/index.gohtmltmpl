@@ -4,13 +4,10 @@
     <div class="hero-body">
       <div class="content">
         <div class="text-center">
-          <h1>👋 Hello world!</h1>
-          <h6 class="font-alt font-light">
-            {{ .User }}A webpage powered by <b>Cirrus.</b>
-          </h6>
+          <h1>Hello {{ .User.Name }}!</h1>
+          <h6 class="font-alt font-light">News:</h6>
         </div>
       </div>
     </div>
   </div>
-</section>
-{{ end }}
+</section>{{ end }}

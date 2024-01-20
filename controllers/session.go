@@ -7,6 +7,7 @@ import (
 	"github.com/capella/cdive/models"
 	"github.com/gorilla/sessions"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 const ContextUserKey string = "user"
@@ -25,7 +26,7 @@ func (c *controllers) SessionMiddleware(next http.Handler) http.Handler {
 		session, _ := store.Get(r, ContextUserKey)
 		if id, ok := session.Values[SessionsIDKey].(uint); ok {
 			user := &models.User{
-				ID: id,
+				Model: gorm.Model{ID: id},
 			}
 			c.DB.First(user)
 			ctx := context.WithValue(r.Context(), ContextUserKey, user)
@@ -68,7 +69,7 @@ func (c *controllers) Login(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	c.renderTemplate("login.html", nil)(w, r)
+	c.renderTemplate("login", nil, nil)(w, r)
 }
 
 func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
@@ -103,7 +104,7 @@ func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
 
-	c.renderTemplate("login.html", formErrors)(w, r)
+	c.renderTemplate("login", formErrors, nil)(w, r)
 }
 
 func (c *controllers) Logout(w http.ResponseWriter, r *http.Request) {

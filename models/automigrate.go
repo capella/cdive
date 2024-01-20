@@ -5,12 +5,16 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func AutoMigrate(db *gorm.DB, secret string) {
 	// Register all the models here
 	err := db.AutoMigrate(
 		&User{},
+		&EmergencyContact{},
+		&UserInfo{},
+		&Events{},
 	)
 	if err != nil {
 		logrus.Error(err)
@@ -26,6 +30,10 @@ func AutoMigrate(db *gorm.DB, secret string) {
 	user_attr.SetPassword("admin", secret)
 	db.Where(user).
 		Attrs(user_attr).FirstOrCreate(user)
+
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&EventsCategory{Name: "Diving Program"})
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&EventsCategory{Name: "Training"})
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&EventsCategory{Name: "Social"})
 }
 
 func S(str string) sql.NullString {
