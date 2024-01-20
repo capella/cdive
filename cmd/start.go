@@ -1,40 +1,73 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"net/http"
+	"time"
 
+	"github.com/capella/cdive/controllers"
+	"github.com/capella/cdive/models"
+	"github.com/gorilla/csrf"
+	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Start the http server.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("start called")
+		config, err := controllers.LoadConfig()
+		if err != nil {
+			logrus.Panic(err)
+		}
+
+		var dbConn gorm.Dialector
+		if config.Server.DSN != nil {
+			dbConn = mysql.Open(*config.Server.DSN)
+		} else {
+			dbConn = sqlite.Open("test.db")
+		}
+
+		db, err := gorm.Open(dbConn)
+		if err != nil {
+			logrus.Panic(err)
+		}
+
+		go models.AutoMigrate(db, config.Server.Secret)
+
+		c := controllers.NewController(db, &config)
+		router := mux.NewRouter()
+
+		router.HandleFunc("/", c.Login)
+		router.HandleFunc("/login", c.LoginPOST).Methods("POST")
+		router.HandleFunc("/login", c.Login)
+		router.HandleFunc("/logout", c.Logout)
+
+		router.PathPrefix("/static/").Handler(
+			http.StripPrefix("/static/", http.FileServer(http.Dir("."))),
+		)
+
+		logrus.WithField("address", config.Server.Address).Info("starting server")
+		csrfRouter := csrf.Protect([]byte(config.Server.Secret))(router)
+		srv := &http.Server{
+			Handler: csrfRouter,
+			Addr:    config.Server.Address,
+			// Good practice: enforce timeouts for servers you create!
+			WriteTimeout: 15 * time.Second,
+			ReadTimeout:  15 * time.Second,
+		}
+
+		logrus.Fatal(srv.ListenAndServe())
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(startCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// startCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
