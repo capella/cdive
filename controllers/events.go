@@ -30,7 +30,6 @@ func (c *controllers) crud(name string, w http.ResponseWriter, r *http.Request) 
 	err := r.ParseForm()
 	if err != nil {
 		logrus.Error(err)
-		formErrors = append(formErrors, err.Error())
 		return
 	}
 

@@ -10,11 +10,13 @@ import (
 	"gorm.io/gorm"
 )
 
-const ContextUserKey string = "user"
+type contextKey string
+
+const UserContextKey contextKey = "user"
 const SessionsIDKey string = "id"
 
 func getContextUser(ctx context.Context) (user *models.User) {
-	if user, ok := ctx.Value(ContextUserKey).(*models.User); ok && user != nil {
+	if user, ok := ctx.Value(UserContextKey).(*models.User); ok && user != nil {
 		return user
 	}
 	return nil
@@ -23,13 +25,13 @@ func getContextUser(ctx context.Context) (user *models.User) {
 func (c *controllers) SessionMiddleware(next http.Handler) http.Handler {
 	store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := store.Get(r, ContextUserKey)
+		session, _ := store.Get(r, UserContextKey.String())
 		if id, ok := session.Values[SessionsIDKey].(uint); ok {
 			user := &models.User{
 				Model: gorm.Model{ID: id},
 			}
 			c.DB.First(user)
-			ctx := context.WithValue(r.Context(), ContextUserKey, user)
+			ctx := context.WithValue(r.Context(), UserContextKey, user)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
 			next.ServeHTTP(w, r)
@@ -82,7 +84,10 @@ func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var login LoginFields
-	decoder.Decode(&login, r.PostForm)
+	err = decoder.Decode(&login, r.PostForm)
+	if err != nil {
+		logrus.Error(err)
+	}
 
 	user := &models.User{
 		Email: login.Email,
@@ -100,7 +105,7 @@ func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
 		store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
 		session, _ := store.Get(r, "user")
 		session.Values["id"] = user.ID
-		session.Save(r, w)
+		_ = session.Save(r, w)
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
 
@@ -111,6 +116,10 @@ func (c *controllers) Logout(w http.ResponseWriter, r *http.Request) {
 	store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
 	session, _ := store.Get(r, "user")
 	session.Values = nil
-	session.Save(r, w)
+	_ = session.Save(r, w)
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func (c contextKey) String() string {
+	return string(c)
 }
