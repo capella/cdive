@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strings"
+
 	"github.com/spf13/viper"
 )
 
@@ -17,8 +19,10 @@ func LoadConfig() (config Config, err error) {
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
+	viper.SetEnvPrefix("CDIVE")
 
 	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(`.`, `_`))
 
 	err = viper.ReadInConfig()
 	if err != nil {
