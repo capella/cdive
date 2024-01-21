@@ -13,7 +13,8 @@ import (
 type contextKey string
 
 const UserContextKey contextKey = "user"
-const SessionsIDKey string = "id"
+const SessionsUserIDKey string = "id"
+const SessionsName string = "user-session"
 
 func getContextUser(ctx context.Context) (user *models.User) {
 	if user, ok := ctx.Value(UserContextKey).(*models.User); ok && user != nil {
@@ -22,13 +23,34 @@ func getContextUser(ctx context.Context) (user *models.User) {
 	return nil
 }
 
+func (c *controllers) store() sessions.Store {
+	return sessions.NewCookieStore([]byte(c.Config.Server.Secret))
+}
+
+func (c *controllers) session(r *http.Request) (*sessions.Session, error) {
+	return c.store().Get(r, SessionsName)
+}
+
+func (c *controllers) sessionUserID(r *http.Request) *uint {
+	session, err := c.session(r)
+	if session == nil || err != nil {
+		return nil
+	}
+	rawID, ok := session.Values[SessionsUserIDKey]
+	if !ok {
+		return nil
+	}
+	if id, ok := rawID.(uint); ok {
+		return &id
+	}
+	return nil
+}
+
 func (c *controllers) SessionMiddleware(next http.Handler) http.Handler {
-	store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, _ := store.Get(r, UserContextKey.String())
-		if id, ok := session.Values[SessionsIDKey].(uint); ok {
+		if id := c.sessionUserID(r); id != nil {
 			user := &models.User{
-				Model: gorm.Model{ID: id},
+				Model: gorm.Model{ID: *id},
 			}
 			c.DB.First(user)
 			ctx := context.WithValue(r.Context(), UserContextKey, user)
@@ -102,21 +124,33 @@ func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
 	if result.Error != nil {
 		formErrors = append(formErrors, "Username and password not found.")
 	} else if login.Email == user.Email {
-		store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
-		session, _ := store.Get(r, "user")
-		session.Values["id"] = user.ID
-		_ = session.Save(r, w)
-		http.Redirect(w, r, "/", http.StatusFound)
+		session, err := c.session(r)
+		if err != nil {
+			logrus.Error(err)
+		}
+		session.Values[SessionsUserIDKey] = user.ID
+		err = session.Save(r, w)
+		if err != nil {
+			logrus.Error(err)
+			formErrors = append(formErrors, "Fail to save session Cookie.")
+		} else {
+			http.Redirect(w, r, "/", http.StatusFound)
+		}
 	}
 
 	c.renderTemplate("login", formErrors, nil)(w, r)
 }
 
 func (c *controllers) Logout(w http.ResponseWriter, r *http.Request) {
-	store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
-	session, _ := store.Get(r, "user")
-	session.Values = nil
-	_ = session.Save(r, w)
+	session, err := c.session(r)
+	if session != nil && err == nil {
+		// MaxAge<0 means delete cookie immediately.
+		session.Options.MaxAge = -1
+		err = session.Save(r, w)
+		if err != nil {
+			logrus.Error(err)
+		}
+	}
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
