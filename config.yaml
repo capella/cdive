@@ -4,5 +4,5 @@ name: My Diving Club
 server:
   # Please, use a random 32 bytes string
   secret: testing
-  address: 127.0.0.1:8000
-  # mysql: 
+  address: 0.0.0.0:8000
+  # mysql:

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"strings"
 	"time"
 
@@ -42,4 +43,12 @@ type Events struct {
 	MinimumQualifications *string
 	DepositCode           *string
 	Cost                  *float64
+}
+
+func (e *Events) BeforeSave(tx *gorm.DB) (err error) {
+	if e.Name == "" {
+		err = errors.New("can't save invalid data")
+	}
+
+	return
 }

@@ -17,6 +17,11 @@ import (
 
 var decoder = schema.NewDecoder()
 
+func init() {
+	decoder.IgnoreUnknownKeys(true)
+	decoder.ZeroEmpty(false)
+}
+
 type controllers struct {
 	DB     *gorm.DB
 	Config *Config
@@ -68,7 +73,7 @@ func (c *controllers) renderTemplate(
 				ParseFiles(files...),
 		)
 
-		err := tmpl.Execute(w, viewData)
+		err := tmpl.ExecuteTemplate(w, "layout.html", viewData)
 		if err != nil {
 			logrus.Error(err)
 			w.WriteHeader(http.StatusInternalServerError)

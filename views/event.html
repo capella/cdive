@@ -33,8 +33,7 @@
             {{template "text-input.html" ( list .DepositCode "DepositCode")}}
 
             {{template "text-input.html" ( list .Category "category")}}
-
-            {{ typeOf .Category }}
+            {{template "text-input.html" ( list .CategoryID "categoryid")}}
 
             <div class="row level">
               <div class="col-xs-3 level-item">
@@ -65,7 +64,9 @@
           <div class="u-flex u-justify-flex-end">
 
       <div class="form-section u-text-right">
+          {{ if .ID }}  
         {{ template "modal.html" (print "/event/" .ID) }}
+        {{ end }}
             <button class="btn-success">Save</button>
             <div>
           </div>

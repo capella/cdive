@@ -20,19 +20,35 @@ func (c *controllers) Events(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *controllers) Event(w http.ResponseWriter, r *http.Request) {
+	c.crud(w, r)
+}
+
+func (c *controllers) crud(w http.ResponseWriter, r *http.Request) {
+	formErrors := []string{}
+
 	var event models.Events
 	err := r.ParseForm()
 	if err != nil {
 		logrus.Error(err)
+		formErrors = append(formErrors, err.Error())
 		return
 	}
 
 	vars := mux.Vars(r)
 	pathID, perr := strconv.Atoi(vars["id"])
 
-	decoder.Decode(&event, r.PostForm)
+	err = decoder.Decode(&event, r.PostForm)
+	if err != nil {
+		logrus.Error(err)
+		formErrors = append(formErrors, err.Error())
+	}
+
 	if r.Method == http.MethodPost {
-		c.DB.Save(&event)
+		result := c.DB.Save(&event)
+		if result.Error != nil {
+			logrus.Error(err)
+			formErrors = append(formErrors, err.Error())
+		}
 	} else if r.Method == http.MethodDelete {
 		if perr == nil {
 			c.DB.Delete(&event, pathID)
@@ -42,5 +58,6 @@ func (c *controllers) Event(w http.ResponseWriter, r *http.Request) {
 			c.DB.Find(&event, pathID)
 		}
 	}
-	c.renderTemplate("event", nil, event)(w, r)
+
+	c.renderTemplate("event", formErrors, event)(w, r)
 }
