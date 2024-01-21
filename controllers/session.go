@@ -85,7 +85,7 @@ func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
 	decoder.Decode(&login, r.PostForm)
 
 	user := &models.User{
-		Email: models.S(login.Email),
+		Email: login.Email,
 	}
 	err = user.SetPassword(login.Password, c.Config.Server.Secret)
 	if err != nil {
@@ -96,7 +96,7 @@ func (c *controllers) LoginPOST(w http.ResponseWriter, r *http.Request) {
 
 	if result.Error != nil {
 		formErrors = append(formErrors, "Username and password not found.")
-	} else if login.Email == user.Email.String {
+	} else if login.Email == user.Email {
 		store := sessions.NewCookieStore([]byte(c.Config.Server.Secret))
 		session, _ := store.Get(r, "user")
 		session.Values["id"] = user.ID

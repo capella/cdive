@@ -13,7 +13,7 @@ type User struct {
 	gorm.Model
 
 	Name         string
-	Email        sql.NullString
+	Email        string `gorm:"unique,index"`
 	PasswordHash sql.NullString
 
 	Admin bool `gorm:"default:FALSE"`

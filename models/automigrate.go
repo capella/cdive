@@ -25,7 +25,7 @@ func AutoMigrate(db *gorm.DB, secret string) {
 		Admin: true,
 	}
 	user_attr := &User{
-		Email: S("admin@admin.com"),
+		Email: "admin@admin.com",
 	}
 	user_attr.SetPassword("admin", secret)
 	db.Where(user).
