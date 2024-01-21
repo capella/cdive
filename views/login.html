@@ -1,0 +1,84 @@
+{{ define "scripts" }}
+<style>
+  body {
+    background-image: url(https://images.unsplash.com/photo-1524838101135-a71ba219084d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2560&q=100);
+    background-size: cover;
+    background-repeat: no-repeat;
+    backdrop-filter: blur(5px);
+  }
+  .intro-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    max-width: 80%;
+    min-width: 350px;
+  }
+  .logo {
+    width: 150px;
+  }
+</style>
+
+{{ end }} {{ define "body" }}
+
+<div class="u-flex u-center h-100p">
+  <div class="intro-card frame px-3 py-4">
+    <div class="frame__body">
+      <form method="post">
+        <div class="u-flex u-center">
+          <h3>Login</h3>
+        </div>
+        <p>Welcome to {{ .Config.SiteName }}!</p>
+        <ul>
+          <li>
+            If you are not a member and want to become one, <a>click here</a>
+          </li>
+          <li>
+            If you are a menber and don't have a password or lost your access,
+            <a>click here.</a>
+          </li>
+        </ul>
+        {{ with .FormErrors }}
+        <div class="toast toast--warning">
+            {{ range . }}
+              {{ . }}
+            {{ end }}
+        </div>
+        {{ end }}
+        <div class="col-lg-6">
+          <div class="input-control">
+            <input
+              name="email"
+              autocomplete="username"
+              type="email"
+              placeholder="Email"
+              value="{{ form "email" }}"
+              {{ if (form "email") }}
+              {{ else }}
+              autofocus="autofocus"
+              {{ end }}
+              required
+            />
+          </div>
+          <div class="input-control">
+            <input
+              name="password"
+              autocomplete="current-password"
+              type="password"
+              placeholder="Password"
+              {{ if (form "email") }}
+              autofocus="autofocus"
+              {{ end }}
+              required
+            />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="u-flex u-justify-flex-end">
+          <button class="animated btn-success">Log In</button>
+        </div>
+        <div class="space"></div>
+        {{ .CSRFField }}
+      </form>
+    </div>
+  </div>
+</div>
+{{ end }}

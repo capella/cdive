@@ -1,0 +1,82 @@
+{{ define "scripts" }}{{ end }} {{ define "body" }}
+<section class="section">
+  <div class="hero fullscreen">
+    <div class="hero-body">
+      <div class="content">
+          <h3>
+            {{ default "New Event" .Controller.Name}}
+          </h3>
+          <p>Please, take be carefully when changing the Event</p>
+          {{ with .FormErrors }}
+          <div class="toast toast--warning">
+            {{ range . }} {{ . }} {{ end }}
+          </div>
+          {{ end }}
+        <form method="post">
+          {{ with .Controller }}
+          <div class="col-lg-6">
+            {{template "text-input.html" ( list .Name "name")}}
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Description:</p>
+              </div>
+              <div class="col-xs-9 level-item">
+                <textarea name="description">{{ default (form "description") .Description  }}</textarea>
+              </div>
+            </div>
+            {{template "text-input.html" ( list .Location "location" (dict "placeholder" "" "title" ""))}}
+
+            {{template "text-input.html" ( list .MinimumQualifications "minimumqualifications")}}
+
+            {{template "text-input.html" ( list .Cost "cost")}}
+
+            {{template "text-input.html" ( list .DepositCode "DepositCode")}}
+
+            {{template "text-input.html" ( list .Category "category")}}
+            {{template "text-input.html" ( list .CategoryID "categoryid")}}
+
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Select:</p>
+              </div>
+              <div class="col-xs-9 level-item input-control">
+                <select class="select" placeholder="Choose one">
+                  <option>Shibe</option>
+                  <option>Doggo</option>
+                  <option>Pupper</option>
+                </select>
+              </div>
+            </div>
+            <div class="row level">
+              <div class="col-xs-3 level-item">
+                <p class="m-0">Select (Multiple):</p>
+              </div>
+              <div class="col-xs-9 level-item input-control">
+                <select multiple class="select">
+                  <option>Shibe</option>
+                  <option>Doggo</option>
+                  <option>Pupper</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="u-flex u-justify-flex-end">
+
+      <div class="form-section u-text-right">
+          {{ if .ID }}  
+        {{ template "modal.html" (print "/event/" .ID) }}
+        {{ end }}
+            <button class="btn-success">Save</button>
+            <div>
+          </div>
+          <div class="space"></div>
+          <input type="hidden" value="{{ .ID }}" name="id" />
+        {{ end }}
+          {{ .CSRFField }}
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{{ end }}

@@ -1,0 +1,47 @@
+<a href="#basic-modal" class="btn btn-primary">Delete</a>
+
+<div class="modal modal-animated--zoom-in" id="basic-modal">
+  <a
+    href="#searchModalDialog"
+    class="modal-overlay close-btn"
+    aria-label="Close"
+  ></a>
+  <div class="modal-content" role="document">
+    <div class="modal-header u-flex u-justify-space-between">
+      <div class="modal-title">Sure?</div>
+      <a href="#components" aria-label="Close">X</a>
+    </div>
+    <div class="modal-body">Are you sure you want to delete?</div>
+    <div class="modal-footer">
+      <div class="form-section u-text-right">
+        <a
+          className="mr-1"
+          href="#components"
+          class="btn btn--sm u-inline-block"
+          >Cancel
+        </a>
+        <div class="btn btn-primary btn--sm u-inline-block" id="delete">
+          Confirm
+        </div>
+        <script>
+          $("#delete").click(function () {
+            $(this).closest("form").attr("method", "DELETE").submit();
+            $.ajax({
+              url: "{{ . }}",
+              type: "DELETE",
+              data: Object.fromEntries(
+                $.find("input[type=hidden]").map((input) => [
+                  input.name,
+                  input.value,
+                ]),
+              ),
+              success: function (result) {
+                window.location.replace("/");
+              },
+            });
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
