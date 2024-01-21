@@ -14,7 +14,7 @@ func AutoMigrate(db *gorm.DB, secret string) {
 		&User{},
 		&EmergencyContact{},
 		&UserInfo{},
-		&Events{},
+		&Event{},
 	)
 	if err != nil {
 		logrus.Error(err)

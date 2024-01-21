@@ -10,7 +10,7 @@ import (
 )
 
 func (c *controllers) Events(w http.ResponseWriter, r *http.Request) {
-	var events []models.Events
+	var events []models.Event
 	c.DB.Order("id desc, start desc").Where("deleted_at is NULL").Find(&events)
 	c.renderTemplate(
 		"events",
@@ -20,13 +20,13 @@ func (c *controllers) Events(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *controllers) Event(w http.ResponseWriter, r *http.Request) {
-	c.crud(w, r)
+	c.crud("event", w, r)
 }
 
-func (c *controllers) crud(w http.ResponseWriter, r *http.Request) {
+func (c *controllers) crud(name string, w http.ResponseWriter, r *http.Request) {
 	formErrors := []string{}
 
-	var event models.Events
+	var event models.Event
 	err := r.ParseForm()
 	if err != nil {
 		logrus.Error(err)
@@ -59,5 +59,5 @@ func (c *controllers) crud(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	c.renderTemplate("event", formErrors, event)(w, r)
+	c.renderTemplate(name, formErrors, event)(w, r)
 }

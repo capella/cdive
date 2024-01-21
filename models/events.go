@@ -22,7 +22,7 @@ func (e *EventsCategory) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-type Events struct {
+type Event struct {
 	gorm.Model
 
 	Name        string
@@ -45,7 +45,7 @@ type Events struct {
 	Cost                  *float64
 }
 
-func (e *Events) BeforeSave(tx *gorm.DB) (err error) {
+func (e *Event) BeforeSave(tx *gorm.DB) (err error) {
 	if e.Name == "" {
 		err = errors.New("can't save invalid data")
 	}
