@@ -25,7 +25,6 @@ WORKDIR /build
 
 COPY --from=build-stage /cdive ./
 COPY views views
-COPY static static
 COPY config.yaml config.yaml
 
 EXPOSE 8000
