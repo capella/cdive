@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"reflect"
 
+	spring "github.com/Masterminds/sprig/v3"
 	"github.com/capella/cdive/models"
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/schema"
@@ -22,7 +23,6 @@ type controllers struct {
 }
 
 type templateData struct {
-	DB   *gorm.DB
 	User *models.User
 
 	CSRFField template.HTML
@@ -42,7 +42,6 @@ func (c *controllers) renderTemplate(
 		user := getContextUser(r.Context())
 
 		viewData := &templateData{
-			DB:         c.DB,
 			User:       user,
 			CSRFField:  csrf.TemplateField(r),
 			Config:     *c.Config,
@@ -50,16 +49,23 @@ func (c *controllers) renderTemplate(
 			Controller: data,
 		}
 
+		files := []string{
+			"views/layout.html",
+			"views/modal.html",
+			"views/inputs/text-input.html",
+			fmt.Sprintf("views/%s.html", templateName),
+		}
+		functions := template.FuncMap{
+			"form":      r.PostFormValue,
+			"hasValues": hasValues,
+		}
+
 		tmpl := template.Must(
-			template.New("layout.html").
-				Funcs(template.FuncMap{
-					"form":      r.PostFormValue,
-					"hasValues": hasValues,
-				}).
-				ParseFiles(
-					"views/layout.html",
-					fmt.Sprintf("views/%s.html", templateName),
-				),
+			template.
+				New("layout.html").
+				Funcs(functions).
+				Funcs(spring.FuncMap()).
+				ParseFiles(files...),
 		)
 
 		err := tmpl.Execute(w, viewData)

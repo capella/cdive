@@ -6,7 +6,6 @@ import (
 
 	"github.com/capella/cdive/controllers"
 	"github.com/capella/cdive/models"
-	"github.com/gorilla/csrf"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"gorm.io/driver/mysql"
@@ -42,9 +41,8 @@ var startCmd = &cobra.Command{
 		router := c.Router()
 
 		logrus.WithField("address", config.Server.Address).Info("starting server")
-		csrfRouter := csrf.Protect([]byte(config.Server.Secret))(router)
 		srv := &http.Server{
-			Handler: csrfRouter,
+			Handler: router,
 			Addr:    config.Server.Address,
 			// Good practice: enforce timeouts for servers you create!
 			WriteTimeout: 15 * time.Second,

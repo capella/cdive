@@ -1,0 +1,18 @@
+{{ $obj := first . }} {{ $name := index . 1 }}
+<!-- -->
+{{ $placeholder := "" }} {{ if has 3 . }} {{ $placeholder = get (index . 2)
+"placeholder" }} {{ end }}
+
+<div class="row level">
+  <div class="col-xs-3 level-item">
+    <p class="m-0">{{ camelcase $name }}:</p>
+  </div>
+  <div class="col-xs-9 level-item">
+    <input
+      type="text"
+      value="{{ default (form $name) $obj }}"
+      name="{{ $name }}"
+      placeholder="{{ $placeholder }}"
+    />
+  </div>
+</div>

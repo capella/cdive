@@ -5,53 +5,61 @@
       <div class="content">
         <div class="text-center">
           <div class="p-3">
-            {{ if and .User .User.Admin }} <a class=
-            "btn btn-success u-pull-right" href="/event/">Create
-            New Event</a> {{ end }}
+            {{ if and .User .User.Admin }}
+            <a class="btn btn-success u-pull-right" href="/event/"
+              >Create New Event</a
+            >
+            {{ end }}
             <h3>Events</h3>
             <p>See bellow all the club events.</p>
           </div>
-        </div>{{ if (hasValues "MinimumQualifications" .Controller)
-        }}{{ end }} {{ if (hasValues "Cost" .Controller) }}{{ end
-        }} {{ if and .User .User.Admin }} {{ end }} {{ range
-        .Controller }} {{ if (hasValues "MinimumQualifications"
-        .Controller) }}{{ end }} {{ if (hasValues "Cost"
-        .Controller) }}{{ end }} {{ end }}
+        </div>
         <table class="table">
-          <thead style="text-align: left;">
+          <thead style="text-align: left">
             <tr>
               <th>From</th>
               <th>To</th>
               <th>Location</th>
               <th>Name</th>
+              {{ if .User }} {{ if (hasValues "MinimumQualifications"
+              .Controller) }}
               <th>Grade</th>
+              {{ end }} {{ if (hasValues "MinimumQualifications" .Controller) }}
               <th>Cost</th>
+              {{ end }} {{ if (hasValues "MinimumQualifications" .Controller) }}
               <th>Deposit Code</th>
+              {{ end }} {{ end }}
               <th>Responsible</th>
               <th></th>
             </tr>
           </thead>
-          <tbody style="text-align: left;">
+          <tbody style="text-align: left">
+            {{ range .Controller }}
             <tr text-left="">
-              <td>26 Nov 23</td>
+              <td>2</td>
               <td>26 Nov 23</td>
               <td>London</td>
-              <td>Row:1 Cell:3</td>
+              <td>{{ .Name }}</td>
               <td>Row:1 Cell:4</td>
               <td>Grade</td>
               <td>Cost</td>
               <td>Row:1 Cell:5</td>
               <td class="tooltip" data-tooltip="Edit Event">
-                <div class="fa-wrapper fa fa-pen"></div>
+                <a href="/event/{{ .ID }}">
+                  <div class="fa-wrapper fa fa-pen"></div>
+                </a>
               </td>
             </tr>
-            <tr style="border-top: hidden;">
+            {{ if .Description }}
+            <tr style="border-top: hidden">
               <td colspan="3"></td>
-              <td colspan="10">teste</td>
+              <td colspan="10">{{ .Description }}</td>
             </tr>
+            {{ end }} {{ end }}
           </tbody>
         </table>
       </div>
     </div>
   </div>
-</section>{{ end }}
+</section>
+{{ end }}
