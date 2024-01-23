@@ -61,7 +61,7 @@ func (c *controllers) renderTemplate(
 		}
 
 		if tmpl, err := template.ParseFiles("views/error.html"); err == nil {
-			err = tmpl.Execute(w, renderErr)
+			_ = tmpl.Execute(w, renderErr)
 		} else {
 			logrus.Error("err")
 		}
