@@ -31,67 +31,77 @@
     <title>{{ .Config.SiteName }}</title>
   </head>
   <body>
-<div class="header header-fixed unselectable header-animated"
-style="background-color: rgba(255, 242, 0, 0.95)">
-  <div class="header-brand">
-    <div class="nav-item no-hover">
-      <h6 class="title">{{ .Config.SiteName }}</h6>
-    </div>
+    <div
+      class="header header-fixed unselectable header-animated"
+      style="background-color: rgba(255, 242, 0, 0.95)"
+    >
+      <div class="header-brand">
+        <div class="nav-item no-hover">
+          <h6 class="title">{{ .Config.SiteName }}</h6>
+        </div>
         <div class="nav-item nav-btn" id="header-btn">
           <span></span>
           <span></span>
           <span></span>
         </div>
-  </div>{{ if .User }}
-  <div class="header-nav" id="header-menu">
-    <div class="nav-right">
-      <div class="nav-item has-sub toggle-hover" id="dropdown">
-        <a class="nav-dropdown-link" href="/events">Events</a>
-        <ul class="dropdown-menu dropdown-animated" role="menu">
-          <li role="menu-item">
-            <a href="/events/training">Training Program</a>
-          </li>
-          <li role="menu-item">
-            <a href="/events/diving">Diving Program</a>
-          </li>
-        </ul>
-      </div>{{ if .User.Admin }}
-      <div class="nav-item has-sub toggle-hover" id="dropdown">
-        <a class="nav-dropdown-link">Club Admin</a>
-        <ul class="dropdown-menu dropdown-animated" role="menu">
-          <li role="menu-item">
-            <a href="/members">Members</a>
-          </li>
-        </ul>
-      </div>{{ end }}
-      <div class="nav-item has-sub toggle-hover" id="dropdown">
-        <a class="nav-dropdown-link">User</a>
-        <ul class="dropdown-menu dropdown-animated" role="menu">
-          <li role="menu-item">
-            <a href="/user">Information</a>
-          </li>
-          <li role="menu-item">
-            <a href="/logout">Logout</a>
-          </li>
-        </ul>
       </div>
+      {{ if .User }}
+        <div class="header-nav" id="header-menu">
+          <div class="nav-right">
+            <div class="nav-item has-sub toggle-hover" id="dropdown">
+              <a class="nav-dropdown-link" href="/events">Events</a>
+              <ul class="dropdown-menu dropdown-animated" role="menu">
+                <li role="menu-item">
+                  <a href="/events/training">Training Program</a>
+                </li>
+                <li role="menu-item">
+                  <a href="/events/diving">Diving Program</a>
+                </li>
+              </ul>
+            </div>
+            {{ if .User.Admin }}
+              <div class="nav-item has-sub toggle-hover" id="dropdown">
+                <a class="nav-dropdown-link">Club Admin</a>
+                <ul class="dropdown-menu dropdown-animated" role="menu">
+                  <li role="menu-item">
+                    <a href="/members">Members</a>
+                  </li>
+                </ul>
+              </div>
+            {{ end }}
+            <div class="nav-item has-sub toggle-hover" id="dropdown">
+              <a class="nav-dropdown-link">User</a>
+              <ul class="dropdown-menu dropdown-animated" role="menu">
+                <li role="menu-item">
+                  <a href="/me">Information</a>
+                </li>
+                <li role="menu-item">
+                  <a href="/logout">Logout</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      {{ else }}
+        <div class="header-nav" id="header-menu">
+          <div class="nav-right">
+            <div class="nav-item">
+              <a href="/login">Login</a>
+            </div>
+          </div>
+        </div>
+      {{ end }}
     </div>
-  </div>{{ else }}
-  <div class="header-nav" id="header-menu">
-    <div class="nav-right">
-      <div class="nav-item">
-        <a href="/login">Login</a>
-      </div>
-    </div>
-  </div>{{ end }}
-</div>{{ template "body" . }}
-<script>
 
+    <br />
+    <br />
+    {{ template "body" . }}
+    <script>
       // Show dropdown when clicked
       $("#header-btn").on("click", function (e) {
         $("#header-menu").toggleClass("active");
         $(".nav-btn").toggleClass("active");
       });
-</script>
+    </script>
   </body>
 </html>

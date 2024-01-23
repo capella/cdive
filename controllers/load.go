@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"html/template"
+	"io"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -54,31 +55,48 @@ func (c *controllers) renderTemplate(
 			Controller: data,
 		}
 
-		files := []string{
-			"views/layout.html",
-			"views/modal.html",
-			"views/inputs/text-input.html",
-			fmt.Sprintf("views/%s.html", templateName),
-		}
-		functions := template.FuncMap{
-			"form":      r.PostFormValue,
-			"hasValues": hasValues,
+		renderErr := renderTemplate(templateName, viewData, w, r)
+		if renderErr == nil {
+			return
 		}
 
-		tmpl := template.Must(
-			template.
-				New("layout.html").
-				Funcs(functions).
-				Funcs(spring.FuncMap()).
-				ParseFiles(files...),
-		)
-
-		err := tmpl.ExecuteTemplate(w, "layout.html", viewData)
-		if err != nil {
-			logrus.Error(err)
-			w.WriteHeader(http.StatusInternalServerError)
+		if tmpl, err := template.ParseFiles("views/error.html"); err == nil {
+			_ = tmpl.Execute(w, renderErr)
+		} else {
+			logrus.Error("err")
 		}
+		w.WriteHeader(http.StatusInternalServerError)
 	}
+}
+
+func renderTemplate(
+	templateName string,
+	data *templateData,
+	w io.Writer,
+	r *http.Request,
+) (err error) {
+	files := []string{
+		"views/layout.html",
+		"views/modal.html",
+		"views/inputs/text-input.html",
+		fmt.Sprintf("views/%s.html", templateName),
+	}
+	functions := template.FuncMap{
+		"form":      r.PostFormValue,
+		"hasValues": hasValues,
+	}
+
+	tmpl, err := template.
+		New("layout.html").
+		Funcs(functions).
+		Funcs(spring.FuncMap()).
+		ParseFiles(files...)
+	if err != nil {
+		return
+	}
+
+	err = tmpl.ExecuteTemplate(w, "layout.html", data)
+	return
 }
 
 func (c *controllers) Home(w http.ResponseWriter, r *http.Request) {

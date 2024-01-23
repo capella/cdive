@@ -1,0 +1,45 @@
+{{ define "scripts" }}
+{{ end }}
+{{ define "body" }}
+  <section class="section">
+    <div class="content">
+      <div class="text-center">
+        <div class="p-3">
+          <h3>Members</h3>
+          <p>
+            See bellow all the club members and their status. To add a new
+            member, share the new membership form.
+          </p>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="table small">
+          <thead style="text-align: left">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>BASAC Membership</th>
+              <th>Payments</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody style="text-align: left">
+            {{ range .Controller }}
+              <tr style="text-align: left">
+                <td>{{ .Name }}</td>
+                <td>{{ .Email }}</td>
+                <td></td>
+                <td></td>
+                <td>
+                  <a class="" href="/members/{{ .ID }}">
+                    <i class="fa-wrapper fa fa-pen"></i>
+                  </a>
+                </td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+{{ end }}

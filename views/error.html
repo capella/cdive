@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" color-mode="user">
+  <head>
+    <!-- <link rel="icon" href="https://via.placeholder.com/70x70" /> -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/cirrus-ui/dist/cirrus.min.css"
+    />
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.min.js"
+      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+      crossorigin="anonymous"
+    ></script>
+    <title>Error</title>
+  </head>
+  <body>
+    <section class="section">
+      <div class="hero fullscreen bg-red-200">
+        <div class="hero-body">
+          <div class="mx-auto">
+            <h3 class="subtitle text-gray-600">{{ .Error }}</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
