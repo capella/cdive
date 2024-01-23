@@ -1,0 +1,13 @@
+{{ define "scripts" }}{{ end }}
+{{ define "body" }}
+  <br />
+  <section class="section">
+    <div class="content">
+      <h4>
+        Welcome
+        {{ default "User" .Controller.Name }}
+      </h4>
+      <div class="divider"></div>
+    </div>
+  </section>
+{{ end }}

@@ -26,10 +26,13 @@ func (c *controllers) Router() *mux.Router {
 	logged.HandleFunc("/event/{id}", c.Event)
 	logged.HandleFunc("/event/", c.Event)
 
-	// TODO(capella): add controllers
+	logged.HandleFunc("/me", c.User)
+
 	admin := router.PathPrefix("/").Subrouter()
 	admin.Use(c.Admin)
-	logged.HandleFunc("/admin", c.Home)
+	admin.HandleFunc("/admin", c.Home)
+	admin.HandleFunc("/members", c.Members)
+	admin.HandleFunc("/members/{id}", c.Member)
 
 	router.PathPrefix("/static/").Handler(
 		http.StripPrefix("/static/", http.FileServer(http.Dir("."))),
