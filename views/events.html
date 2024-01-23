@@ -1,71 +1,77 @@
-{{ define "scripts" }}{{ end }} {{ define "body" }}
-<section class="section">
-  <div class="hero fullscreen">
-    <div class="hero-body">
-      <div class="content">
-        <div class="text-center">
-          <div class="p-3">
-            {{ if and .User .User.Admin }}
-            <a class="btn btn-success u-pull-right" href="/event/"
-              >Create New Event</a
-            >
-            {{ end }}
-            <h3>Events</h3>
-            <p>See bellow all the club events.</p>
+{{ define "scripts" }}{{ end }}
+{{ define "body" }}
+  <section class="section">
+    <div class="hero fullscreen">
+      <div class="hero-body">
+        <div class="content">
+          <div class="text-center">
+            <div class="p-3">
+              {{ if and .User .User.Admin }}
+                <a class="btn btn-success u-pull-right" href="/event/"
+                  >Create New Event</a
+                >
+              {{ end }}
+              <h3>Events</h3>
+              <p>See bellow all the club events.</p>
+            </div>
           </div>
-        </div>
-        <div class="table-container">
-          <table class="table small">
-            <thead style="text-align: left">
-              <tr>
-                <th>From</th>
-                <th>To</th>
-                <th>Location</th>
-                <th>Name</th>
-                {{ if .User }} {{ if (hasValues "MinimumQualifications"
-                .Controller) }}
-                <th>Grade</th>
-                {{ end }} {{ if (hasValues "MinimumQualifications" .Controller)
-                }}
-                <th>Cost</th>
-                {{ end }} {{ if (hasValues "MinimumQualifications" .Controller)
-                }}
-                <th>Deposit Code</th>
-                {{ end }} {{ end }}
-                <th>Responsible</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody style="text-align: left">
-              {{ $user := .User }} {{ range .Controller }}
-              <tr text-left="">
-                <td>2</td>
-                <td>26 Nov 23</td>
-                <td>London</td>
-                <td>{{ .Name }}</td>
-                <td>Row:1 Cell:4</td>
-                <td>Grade</td>
-                <td>Cost</td>
-                <td>Row:1 Cell:5</td>
-                {{ if and $user $user.Admin }}
-                <td class="tooltip" data-tooltip="Edit Event">
-                  <a href="/event/{{ .ID }}">
-                    <div class="fa-wrapper fa fa-pen"></div>
-                  </a>
-                </td>
+          <div class="table-container">
+            <table class="table small">
+              <thead style="text-align: left">
+                <tr>
+                  <th>From</th>
+                  <th>To</th>
+                  <th>Location</th>
+                  <th>Name</th>
+                  {{ if .User }}
+                    {{ if (hasValues "MinimumQualifications"
+                      .Controller)
+                    }}
+                      <th>Grade</th>
+                    {{ end }}
+                    {{ if (hasValues "MinimumQualifications" .Controller) }}
+                      <th>Cost</th>
+                    {{ end }}
+                    {{ if (hasValues "MinimumQualifications" .Controller) }}
+                      <th>Deposit Code</th>
+                    {{ end }}
+                  {{ end }}
+                  <th>Responsible</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody style="text-align: left">
+                {{ $user := .User }}
+                {{ range .Controller }}
+                  <tr text-left="">
+                    <td>2</td>
+                    <td>26 Nov 23</td>
+                    <td>London</td>
+                    <td>{{ .Name }}</td>
+                    <td>Row:1 Cell:4</td>
+                    <td>Grade</td>
+                    <td>Cost</td>
+                    <td>Row:1 Cell:5</td>
+                    {{ if and $user $user.Admin }}
+                      <td class="tooltip" data-tooltip="Edit Event">
+                        <a href="/event/{{ .ID }}">
+                          <div class="fa-wrapper fa fa-pen"></div>
+                        </a>
+                      </td>
+                    {{ end }}
+                  </tr>
+                  {{ if .Description }}
+                    <tr style="border-top: hidden">
+                      <td colspan="3"></td>
+                      <td colspan="10">{{ .Description }}</td>
+                    </tr>
+                  {{ end }}
                 {{ end }}
-              </tr>
-              {{ if .Description }}
-              <tr style="border-top: hidden">
-                <td colspan="3"></td>
-                <td colspan="10">{{ .Description }}</td>
-              </tr>
-              {{ end }} {{ end }}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 {{ end }}
